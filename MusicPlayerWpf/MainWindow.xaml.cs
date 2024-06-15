@@ -19,6 +19,8 @@ using System.Windows.Threading;
 using System.Xml.Linq;
 using Button = System.Windows.Controls.Button;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using Path = System.IO.Path;
+using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
 
 namespace MusicPlayerWpf
 {
@@ -37,63 +39,118 @@ namespace MusicPlayerWpf
         public static RoutedCommand OpenFileCommand = new RoutedCommand();
         public static RoutedCommand ExitCommand = new RoutedCommand();
 
+        //список треков
+        public List<Track> Tracks { get; set; } = new List<Track>();
+        private int currentTrackIndex = -1; // Индекс текущего выбранного трека
+
 
         public MainWindow()
         {
             InitializeComponent();
-
             _player = new MediaPlayer();
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromSeconds(1);
             _timer.Tick += Timer_Tick;
             _isPlaying = false;
-
             this.DataContext = this;
             FilesDG.ItemsSource = filesInfolders;
-
             selectedTracks = new List<string>();
         }
 
         private void OpenFileMI_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "MP3 files (*.mp3)|*.mp3";
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Multiselect = true,
+                Filter = "MP3 files (*.mp3)|*.mp3|All files (*.*)|*.*"
+            };
+
             if (openFileDialog.ShowDialog() == true)
             {
-                ReadMP3File(openFileDialog.FileName);
-                FileNameLb.Content = $"File: {openFileDialog.FileName} now start to play!";
-                _player.Open(new Uri(openFileDialog.FileName));
-                _player.Play();
-                _isPlaying = true;
-                _timer.Start();
-                PlayPauseBtn.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
+                foreach (string filename in openFileDialog.FileNames)
+                {
+                    var fileInfo = TagLib.File.Create(filename);
+                    var track = new Track
+                    {
+                        FilePath = filename,
+                        Title = fileInfo.Tag.Title ?? Path.GetFileName(filename),
+                        Artist = fileInfo.Tag.FirstPerformer ?? "Unknown Artist",
+                        Duration = fileInfo.Properties.Duration.ToString(@"mm\:ss"),
+                        AlbumArt = fileInfo.Tag.Pictures.FirstOrDefault()?.Data?.Data
+                    };
+
+                    Tracks.Add(track);
+                }
+
+                FilesDG.ItemsSource = null;
+                FilesDG.ItemsSource = Tracks;
+
+                if (Tracks.Count > 0 && Tracks[0].AlbumArt != null)
+                {
+                    using (var ms = new MemoryStream(Tracks[0].AlbumArt))
+                    {
+                        var bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.StreamSource = ms;
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.EndInit();
+                        AlbumArtImage.Source = bitmap;
+                    }
+                }
             }
         }
 
         private void OpenFolderMI_Click(object sender, RoutedEventArgs e)
         {
-            FolderBrowserDialog fileDialog = new FolderBrowserDialog();
-
-            var fileDialogOk = fileDialog.ShowDialog();
-
-            var filename = fileDialog.SelectedPath;
-
-            DirectoryInfo dirInfo = new DirectoryInfo(filename);
-
-            // Get mp3 files in the directory
-            FileInfo[] fileInfo = dirInfo.GetFiles("*.mp3");
-            foreach (FileInfo f in fileInfo)
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                filesInfolders.Add(f);
-                selectedTracks.Add(f.FullName); // Add full path to the selectedTracks list
-            }
+                Multiselect = true,
+                Filter = "MP3 files (*.mp3)|*.mp3|All files (*.*)|*.*"
+            };
 
-            FilesDG.Items.Refresh();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                foreach (string filename in openFileDialog.FileNames)
+                {
+                    var fileInfo = TagLib.File.Create(filename);
+                    var track = new Track
+                    {
+                        FilePath = filename,
+                        Title = fileInfo.Tag.Title ?? Path.GetFileName(filename),
+                        Artist = fileInfo.Tag.FirstPerformer ?? "Unknown Artist",
+                        Duration = fileInfo.Properties.Duration.ToString(@"mm\:ss"),
+                        AlbumArt = fileInfo.Tag.Pictures.FirstOrDefault()?.Data?.Data
+                    };
+
+                    Tracks.Add(track);
+                }
+
+                FilesDG.ItemsSource = null;
+                FilesDG.ItemsSource = Tracks;
+
+                if (Tracks.Count > 0 && Tracks[0].AlbumArt != null)
+                {
+                    using (var ms = new MemoryStream(Tracks[0].AlbumArt))
+                    {
+                        var bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.StreamSource = ms;
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.EndInit();
+                        AlbumArtImage.Source = bitmap;
+                    }
+                }
+            }
         }
 
         private void PlayPauseBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (_isPlaying)
+            if (currentTrackIndex == -1 && Tracks.Count > 0)
+            {
+                currentTrackIndex = 0;
+                PlayTrack();
+            }
+            else if (_isPlaying)
             {
                 _player.Pause();
                 _isPlaying = false;
@@ -105,6 +162,35 @@ namespace MusicPlayerWpf
                 _isPlaying = true;
                 _timer.Start();
                 PlayPauseBtn.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
+            }
+        }
+        private void PlayTrack()
+        {
+            if (currentTrackIndex >= 0 && currentTrackIndex < Tracks.Count)
+            {
+                _player.Open(new Uri(Tracks[currentTrackIndex].FilePath));
+                _player.Play();
+                _isPlaying = true;
+                _timer.Start();
+                PlayPauseBtn.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
+
+                var track = Tracks[currentTrackIndex];
+                if (track.AlbumArt != null)
+                {
+                    using (var ms = new MemoryStream(track.AlbumArt))
+                    {
+                        var bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.StreamSource = ms;
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.EndInit();
+                        AlbumArtImage.Source = bitmap;
+                    }
+                }
+                else
+                {
+                    AlbumArtImage.Source = null;
+                }
             }
         }
 
@@ -234,27 +320,30 @@ namespace MusicPlayerWpf
                 ((Button)sender).Content = new MaterialDesignThemes.Wpf.PackIcon { Kind = MaterialDesignThemes.Wpf.PackIconKind.WindowMaximize };
             }
         }
+
         private void SavePlaylist_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Playlist files (*.m3u)|*.m3u";
-            if (saveFileDialog.ShowDialog() == true)
+            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 SavePlaylistToFile(saveFileDialog.FileName);
             }
         }
+
         private void SavePlaylistToFile(string fileName)
         {
             using (StreamWriter writer = new StreamWriter(fileName))
             {
-                foreach (var track in selectedTracks)
+                foreach (var track in Tracks)
                 {
-                    writer.WriteLine(track);
+                    writer.WriteLine(track.FilePath);
                 }
             }
 
             System.Windows.MessageBox.Show("Playlist saved successfully!", "Save Playlist", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
 
         //горячие клавиши
         private void PauseCommand_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -290,6 +379,51 @@ namespace MusicPlayerWpf
         private void ExitCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void FilesDG_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedTrack = FilesDG.SelectedItem as Track;
+            if (selectedTrack != null)
+            {
+                currentTrackIndex = Tracks.IndexOf(selectedTrack);
+                PlayTrack();
+            }
+        }
+        private void SkipPreviousBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (Tracks.Count > 0)
+            {
+                currentTrackIndex--;
+                if (currentTrackIndex < 0)
+                {
+                    currentTrackIndex = Tracks.Count - 1;
+                }
+                PlayTrack();
+            }
+        }
+
+        private void SkipNextBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (Tracks.Count > 0)
+            {
+                currentTrackIndex++;
+                if (currentTrackIndex >= Tracks.Count)
+                {
+                    currentTrackIndex = 0;
+                }
+                PlayTrack();
+            }
+        }
+
+
+        public class Track
+        {
+            public string FilePath { get; set; }
+            public string Title { get; set; }
+            public string Artist { get; set; }
+            public string Duration { get; set; }
+            public byte[] AlbumArt { get; set; }
         }
     }
 }

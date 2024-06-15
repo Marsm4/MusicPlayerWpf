@@ -1,86 +1,85 @@
-﻿<Window
-    x:Class="MusicPlayerWpf.MainWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:MusicPlayerWpf"
-    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="T: Music"
-    Width="700"
-    Height="350"
-    AllowsTransparency="True"
-    Icon="/logo.ico"
-    ResizeMode="NoResize"
-    WindowStartupLocation="CenterScreen"
-    WindowStyle="None"
-    mc:Ignorable="d">
-	<Window.CommandBindings>
-		<CommandBinding Command="{x:Static local:MainWindow.PauseCommand}" Executed="PauseCommand_Executed"/>
-		<CommandBinding Command="{x:Static local:MainWindow.RestartCommand}" Executed="RestartCommand_Executed"/>
-		<CommandBinding Command="{x:Static local:MainWindow.OpenFileCommand}" Executed="OpenFileCommand_Executed"/>
-		<CommandBinding Command="{x:Static local:MainWindow.ExitCommand}" Executed="ExitCommand_Executed"/>
-	</Window.CommandBindings>
+﻿<Window x:Class="MusicPlayerWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:MusicPlayerWpf"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Title="T: Music"
+        Width="700"
+        Height="350"
+        AllowsTransparency="True"
+        Icon="/logo.ico"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        mc:Ignorable="d">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:MainWindow.PauseCommand}" Executed="PauseCommand_Executed"/>
+        <CommandBinding Command="{x:Static local:MainWindow.RestartCommand}" Executed="RestartCommand_Executed"/>
+        <CommandBinding Command="{x:Static local:MainWindow.OpenFileCommand}" Executed="OpenFileCommand_Executed"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ExitCommand}" Executed="ExitCommand_Executed"/>
+    </Window.CommandBindings>
 
-	<Window.InputBindings>
-		<KeyBinding Key="Z" Modifiers="Control" Command="{x:Static local:MainWindow.PauseCommand}"/>
-		<KeyBinding Key="X" Modifiers="Control" Command="{x:Static local:MainWindow.RestartCommand}"/>
-		<KeyBinding Key="A" Modifiers="Control" Command="{x:Static local:MainWindow.OpenFileCommand}"/>
-		<KeyBinding Key="E" Modifiers="Control" Command="{x:Static local:MainWindow.ExitCommand}"/>
-	</Window.InputBindings>
-	<Grid MouseDown="Window_MouseDown">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="auto" />
-			<RowDefinition />
-			<RowDefinition Height="auto" />
-		</Grid.RowDefinitions>
-		<Grid Grid.Row="0" Background="#E91E63">
-			<Menu>
-				<MenuItem Header="_File">
-					<MenuItem
+    <Window.InputBindings>
+        <KeyBinding Key="Z" Modifiers="Control" Command="{x:Static local:MainWindow.PauseCommand}"/>
+        <KeyBinding Key="X" Modifiers="Control" Command="{x:Static local:MainWindow.RestartCommand}"/>
+        <KeyBinding Key="A" Modifiers="Control" Command="{x:Static local:MainWindow.OpenFileCommand}"/>
+        <KeyBinding Key="E" Modifiers="Control" Command="{x:Static local:MainWindow.ExitCommand}"/>
+    </Window.InputBindings>
+    <Grid MouseDown="Window_MouseDown">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="#E91E63">
+            <Menu>
+                <MenuItem Header="_File">
+                    <MenuItem
                         Click="OpenFileMI_Click"
                         Header="Open"
                         Icon="{materialDesign:PackIcon Kind=File}" />
-					<MenuItem
+                    <MenuItem
                         Click="OpenFolderMI_Click"
                         Header="Open Folder.."
                         Icon="{materialDesign:PackIcon Kind=Folder}" />
-					<Separator />
-					<MenuItem Header="Copy song" Icon="{materialDesign:PackIcon Kind=ContentCopy}" />
-					<MenuItem
+                    <Separator />
+                    <MenuItem Header="Copy song" Icon="{materialDesign:PackIcon Kind=ContentCopy}" />
+                    <MenuItem
                         Click="SavePlaylist_Click"
                         Header="Save playlist"
                         Icon="{materialDesign:PackIcon Kind=ContentSave}" />
-					<Separator />
-					<MenuItem
+                    <Separator />
+                    <MenuItem
                         Command="{x:Static local:MainWindow.CloseCommand}"
                         Header="Exit"
                         Icon="{materialDesign:PackIcon Kind=ExitToApp}"
                         InputGestureText="Ctrl+E" />
-				</MenuItem>
-				<MenuItem Header="_Edit">
-					<MenuItem
+                </MenuItem>
+                <MenuItem Header="_Edit">
+                    <MenuItem
                         Command="Cut"
                         Header="_Cut"
                         Icon="{materialDesign:PackIcon Kind=ContentCut}" />
-					<MenuItem
+                    <MenuItem
                         Command="Copy"
                         Header="_Copy"
                         Icon="{materialDesign:PackIcon Kind=ContentCopy}" />
-					<MenuItem
+                    <MenuItem
                         Command="Paste"
                         Header="_Paste"
                         Icon="{materialDesign:PackIcon Kind=ContentPaste}" />
-				</MenuItem>
-				<MenuItem Header="_View">
-					<MenuItem
+                </MenuItem>
+                <MenuItem Header="_View">
+                    <MenuItem
                         Click="MenuItem_Click"
                         Header="View task points"
                         Icon="{materialDesign:PackIcon Kind=Help}" />
-				</MenuItem>
-			</Menu>
-			<WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center">
-				<Button
+                </MenuItem>
+            </Menu>
+            <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button
                     x:Name="MinimazieBtn"
                     Click="MinimazieBtn_Click"
                     Content="{materialDesign:PackIcon WindowMinimize}"
@@ -88,15 +87,15 @@
                     IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
                     Style="{StaticResource MaterialDesignFlatButton}"
                     ToolTip="Minimize window" />
-				<Button
-                x:Name="ToggleWindowStateBtn"
-                Click="ToggleWindowStateBtn_Click"
-                Content="{materialDesign:PackIcon WindowRestore}"
-                Foreground="White"
-                IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                Style="{StaticResource MaterialDesignFlatButton}"
-                ToolTip="Maximize/Restore window" />
-				<Button
+                <Button
+                    x:Name="ToggleWindowStateBtn"
+                    Click="ToggleWindowStateBtn_Click"
+                    Content="{materialDesign:PackIcon WindowRestore}"
+                    Foreground="White"
+                    IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    ToolTip="Maximize/Restore window" />
+                <Button
                     x:Name="CloseBtn"
                     Click="CloseBtn_Click"
                     Content="{materialDesign:PackIcon Close}"
@@ -104,97 +103,73 @@
                     IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
                     Style="{StaticResource MaterialDesignFlatButton}"
                     ToolTip="Close window" />
-			</WrapPanel>
-		</Grid>
+            </WrapPanel>
+        </Grid>
 
-		<Grid Grid.Row="1">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="1*" />
-				<ColumnDefinition Width="2*" />
-			</Grid.ColumnDefinitions>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
 
-			<!--<Image
-                Grid.Column="0"
-                Margin="12"
-                Source="/logo.jpg" />-->
-			<Image x:Name="AlbumArtImage" Width="150" Height="150" Margin="10" Stretch="Uniform"/>
+            <!-- Изображение обложки альбома -->
+            <Image x:Name="AlbumArtImage" Width="150" Height="150" Margin="10" Stretch="Uniform"/>
 
-			<Grid Grid.Column="1" Margin="12">
-				<DataGrid
-                    x:Name="FilesDG"
-                    AutoGenerateColumns="True"
-                    ItemsSource="{Binding filesInfolders}" />
-			</Grid>
-		</Grid>
+            <!-- DataGrid для отображения файлов -->
+            <Grid Grid.Column="1" Margin="12">
+                <DataGrid x:Name="FilesDG" AutoGenerateColumns="False" ItemsSource="{Binding Tracks}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*" />
+                        <DataGridTextColumn Header="Artist" Binding="{Binding Artist}" Width="*" />
+                        <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Grid>
 
-		<Grid Grid.Row="2">
-			<Grid.RowDefinitions>
-				<RowDefinition />
-				<RowDefinition />
-			</Grid.RowDefinitions>
-			<Grid Grid.Row="0">
-				<Label x:Name="FileNameLb" Content="No song select" />
-			</Grid>
-			<Grid Grid.Row="1">
-				<Grid>
-					<Slider
-                        x:Name="PositionSlider"
-                        Maximum="100"
-                        Minimum="0"
-                        ValueChanged="Slider_ValueChanged" />
-					<Label x:Name="CurrentPositionLabel" HorizontalAlignment="Left" Content="0:00" />
-					<Label x:Name="TotalDurationLabel" HorizontalAlignment="Right" Content="0:00" />
-				</Grid>
-				<materialDesign:Card Margin="0,20,0,0">
-					<Grid>
-						<Grid Width="120" HorizontalAlignment="Center">
-							<Button
-                                HorizontalAlignment="Left"
-                                Content="{materialDesign:PackIcon SkipPrevious}"
-                                IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                                Style="{StaticResource MaterialDesignFlatButton}"
-                                ToolTip="SkipPrevious" />
-							<Button
-                                HorizontalAlignment="Right"
-                                Content="{materialDesign:PackIcon SkipNext}"
-                                IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                                Style="{StaticResource MaterialDesignFlatButton}"
-                                ToolTip="SkipNext" />
-						</Grid>
-						<WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center">
-							<materialDesign:PackIcon
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Kind="VolumeMedium" />
-							<Slider
-                                Width="80"
-                                Margin="0,0,10,0"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Maximum="100"
-                                Minimum="0"
-                                Value="100" />
-						</WrapPanel>
-					</Grid>
-				</materialDesign:Card>
-				<WrapPanel HorizontalAlignment="Center" Margin="0,12,0,0">
-					<Button
-                        Click="PlayPauseBtn_Click"
-                        IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                        ToolTip="Play/Pause">
-						<materialDesign:PackIcon x:Name="PlayPauseBtn" Kind="Play" />
-					</Button>
-					<Button
-                        Click="StopBtn_Click"
-                        IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                        ToolTip="Stop">
-						<materialDesign:PackIcon Kind="Stop" />
-					</Button>
-				</WrapPanel>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Label x:Name="FileNameLb" Content="No song select" />
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid>
+                    <Slider x:Name="PositionSlider" Maximum="100" Minimum="0" ValueChanged="Slider_ValueChanged" />
+                    <Label x:Name="CurrentPositionLabel" HorizontalAlignment="Left" Content="0:00" />
+                    <Label x:Name="TotalDurationLabel" HorizontalAlignment="Right" Content="0:00" />
+                </Grid>
+                <materialDesign:Card Margin="0,20,0,0">
+                    <Grid>
+                        <Grid Width="120" HorizontalAlignment="Center">
+                            <Button HorizontalAlignment="Left" Content="{materialDesign:PackIcon SkipPrevious}" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="SkipPrevious" />
+                            <Button HorizontalAlignment="Right" Content="{materialDesign:PackIcon SkipNext}" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="SkipNext" />
+                        </Grid>
+                        <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <materialDesign:PackIcon HorizontalAlignment="Right" VerticalAlignment="Center" Kind="VolumeMedium" />
+                            <Slider Width="80" Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Center" Maximum="100" Minimum="0" Value="100" />
+                        </WrapPanel>
+                    </Grid>
+                </materialDesign:Card>
+                <WrapPanel HorizontalAlignment="Center" Margin="0,12,0,0">
+                    <Button Click="PlayPauseBtn_Click" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" ToolTip="Play/Pause">
+                        <materialDesign:PackIcon x:Name="PlayPauseBtn" Kind="Play" />
+                    </Button>
+                    <Button Click="StopBtn_Click" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" ToolTip="Stop">
+                        <materialDesign:PackIcon Kind="Stop" />
+                    </Button>
+                    <Button Click="SkipPreviousBtn_Click" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" ToolTip="Skip Previous">
+                        <materialDesign:PackIcon Kind="SkipPrevious" />
+                    </Button>
 
-			</Grid>
-		</Grid>
-	</Grid>
+                    <Button Click="SkipNextBtn_Click" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" ToolTip="Skip Next">
+                        <materialDesign:PackIcon Kind="SkipNext" />
+                    </Button>
+                </WrapPanel>
+
+            </Grid>
+        </Grid>
+    </Grid>
 </Window>
