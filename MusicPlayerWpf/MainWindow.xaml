@@ -7,10 +7,9 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="T: Music"
-    Width="500"
+    Width="700"
     Height="350"
     AllowsTransparency="True"
-    Background="{x:Null}"
     Icon="/logo.ico"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
@@ -47,7 +46,10 @@
                         Icon="{materialDesign:PackIcon Kind=Folder}" />
 					<Separator />
 					<MenuItem Header="Copy song" Icon="{materialDesign:PackIcon Kind=ContentCopy}" />
-					<MenuItem Header="Save playlist" Icon="{materialDesign:PackIcon Kind=ContentSave}" />
+					<MenuItem
+                        Click="SavePlaylist_Click"
+                        Header="Save playlist"
+                        Icon="{materialDesign:PackIcon Kind=ContentSave}" />
 					<Separator />
 					<MenuItem
                         Command="{x:Static local:MainWindow.CloseCommand}"

@@ -28,6 +28,7 @@ namespace MusicPlayerWpf
         private DispatcherTimer _timer;
         private bool _isPlaying;
         List<FileInfo> filesInfolders = new List<FileInfo>();
+        private List<string> selectedTracks;
 
         public static RoutedCommand CloseCommand = new RoutedCommand();
 
@@ -43,6 +44,8 @@ namespace MusicPlayerWpf
 
             this.DataContext = this;
             FilesDG.ItemsSource = filesInfolders;
+
+            selectedTracks = new List<string>();
         }
 
         private void OpenFileMI_Click(object sender, RoutedEventArgs e)
@@ -71,11 +74,12 @@ namespace MusicPlayerWpf
 
             DirectoryInfo dirInfo = new DirectoryInfo(filename);
 
-            // таким образом мы можем получить файлы в директории
+            // Get mp3 files in the directory
             FileInfo[] fileInfo = dirInfo.GetFiles("*.mp3");
             foreach (FileInfo f in fileInfo)
             {
                 filesInfolders.Add(f);
+                selectedTracks.Add(f.FullName); // Add full path to the selectedTracks list
             }
 
             FilesDG.Items.Refresh();
@@ -200,6 +204,27 @@ namespace MusicPlayerWpf
                 this.WindowState = WindowState.Normal;
                 ((Button)sender).Content = new MaterialDesignThemes.Wpf.PackIcon { Kind = MaterialDesignThemes.Wpf.PackIconKind.WindowMaximize };
             }
+        }
+        private void SavePlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+            saveFileDialog.Filter = "Playlist files (*.m3u)|*.m3u";
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                SavePlaylistToFile(saveFileDialog.FileName);
+            }
+        }
+        private void SavePlaylistToFile(string fileName)
+        {
+            using (StreamWriter writer = new StreamWriter(fileName))
+            {
+                foreach (var track in selectedTracks)
+                {
+                    writer.WriteLine(track);
+                }
+            }
+
+            System.Windows.MessageBox.Show("Playlist saved successfully!", "Save Playlist", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
