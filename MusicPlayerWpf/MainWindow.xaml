@@ -117,7 +117,7 @@
 
             <!-- DataGrid для отображения файлов -->
             <Grid Grid.Column="1" Margin="12">
-                <DataGrid x:Name="FilesDG" AutoGenerateColumns="False" ItemsSource="{Binding Tracks}">
+                <DataGrid x:Name="FilesDG" AutoGenerateColumns="False" ItemsSource="{Binding Tracks}" SelectionChanged="FilesDG_SelectionChanged">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*" />
                         <DataGridTextColumn Header="Artist" Binding="{Binding Artist}" Width="*" />

@@ -390,6 +390,7 @@ namespace MusicPlayerWpf
                 PlayTrack();
             }
         }
+
         private void SkipPreviousBtn_Click(object sender, RoutedEventArgs e)
         {
             if (Tracks.Count > 0)
