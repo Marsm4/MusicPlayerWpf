@@ -10,6 +10,7 @@
     Width="500"
     Height="350"
     AllowsTransparency="True"
+    Background="{x:Null}"
     Icon="/logo.ico"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
@@ -85,11 +86,13 @@
                     Style="{StaticResource MaterialDesignFlatButton}"
                     ToolTip="Minimize window" />
 				<Button
-                    Content="{materialDesign:PackIcon WindowRestore}"
-                    Foreground="White"
-                    IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                    Style="{StaticResource MaterialDesignFlatButton}"
-                    ToolTip="Restore window" />
+                x:Name="ToggleWindowStateBtn"
+                Click="ToggleWindowStateBtn_Click"
+                Content="{materialDesign:PackIcon WindowRestore}"
+                Foreground="White"
+                IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                Style="{StaticResource MaterialDesignFlatButton}"
+                ToolTip="Maximize/Restore window" />
 				<Button
                     x:Name="CloseBtn"
                     Click="CloseBtn_Click"
@@ -136,7 +139,7 @@
                         Minimum="0"
                         ValueChanged="Slider_ValueChanged" />
 					<Label x:Name="CurrentPositionLabel" HorizontalAlignment="Left" Content="0:00" />
-					<Label x:Name="TotalDurationLabel" HorizontalAlignment="Right" Content="3:26" />
+					<Label x:Name="TotalDurationLabel" HorizontalAlignment="Right" Content="0:00" />
 				</Grid>
 				<materialDesign:Card Margin="0,20,0,0">
 					<Grid>
@@ -170,16 +173,22 @@
 						</WrapPanel>
 					</Grid>
 				</materialDesign:Card>
-				<Button
-                    x:Name="PlayPauseBtn"
-                    Margin="0,12,0,0"
-                    HorizontalAlignment="Center"
-                    Click="PlayPauseBtn_Click"
-                    IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                    ToolTip="Play">
-					<materialDesign:PackIcon Kind="Play" />
-				</Button>
+				<WrapPanel HorizontalAlignment="Center" Margin="0,12,0,0">
+					<Button
+                        Click="PlayPauseBtn_Click"
+                        IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                        ToolTip="Play/Pause">
+						<materialDesign:PackIcon x:Name="PlayPauseBtn" Kind="Play" />
+					</Button>
+					<Button
+                        Click="StopBtn_Click"
+                        IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                        ToolTip="Stop">
+						<materialDesign:PackIcon Kind="Stop" />
+					</Button>
+				</WrapPanel>
 			</Grid>
 		</Grid>
 	</Grid>

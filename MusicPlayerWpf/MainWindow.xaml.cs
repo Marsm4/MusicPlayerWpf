@@ -15,15 +15,18 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.Xml.Linq;
+using Button = System.Windows.Controls.Button;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+
 namespace MusicPlayerWpf
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private MediaPlayer _player;
+        private DispatcherTimer _timer;
+        private bool _isPlaying;
         List<FileInfo> filesInfolders = new List<FileInfo>();
 
         public static RoutedCommand CloseCommand = new RoutedCommand();
@@ -33,20 +36,28 @@ namespace MusicPlayerWpf
             InitializeComponent();
 
             _player = new MediaPlayer();
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromSeconds(1);
+            _timer.Tick += Timer_Tick;
+            _isPlaying = false;
+
             this.DataContext = this;
             FilesDG.ItemsSource = filesInfolders;
         }
 
         private void OpenFileMI_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
+            OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "MP3 files (*.mp3)|*.mp3";
             if (openFileDialog.ShowDialog() == true)
             {
                 ReadMP3File(openFileDialog.FileName);
                 FileNameLb.Content = $"File: {openFileDialog.FileName} now start to play!";
                 _player.Open(new Uri(openFileDialog.FileName));
-                _player.Play(); // Start playing the file
+                _player.Play();
+                _isPlaying = true;
+                _timer.Start();
+                PlayPauseBtn.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
             }
         }
 
@@ -70,19 +81,31 @@ namespace MusicPlayerWpf
             FilesDG.Items.Refresh();
         }
 
-        private void PlayBtn_Click(object sender, RoutedEventArgs e)
+        private void PlayPauseBtn_Click(object sender, RoutedEventArgs e)
         {
-            _player.Play();
+            if (_isPlaying)
+            {
+                _player.Pause();
+                _isPlaying = false;
+                PlayPauseBtn.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
+            }
+            else
+            {
+                _player.Play();
+                _isPlaying = true;
+                _timer.Start();
+                PlayPauseBtn.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
+            }
         }
 
         private void StopBtn_Click(object sender, RoutedEventArgs e)
         {
             _player.Stop();
-        }
-
-        private void PauseBtn_Click(object sender, RoutedEventArgs e)
-        {
-            _player.Pause();
+            _isPlaying = false;
+            _timer.Stop();
+            PlayPauseBtn.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
+            PositionSlider.Value = 0;
+            CurrentPositionLabel.Content = "0:00";
         }
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
@@ -111,7 +134,6 @@ namespace MusicPlayerWpf
             System.Windows.MessageBox.Show("Close");
         }
 
-        // TagLibSharp NuGet Package
         private void ReadMP3File(string filePath)
         {
             var file = TagLib.File.Create(filePath);
@@ -125,17 +147,29 @@ namespace MusicPlayerWpf
             // Получение названия трека
             string title = file.Tag.Title ?? "Unknown Title";
 
-            // Получение обложки
-            var pictures = file.Tag.Pictures;
-            if (pictures.Length > 0)
-            {
-                var coverData = pictures[0].Data.Data;
-                // Обработка обложки (например, показать в UI)
-                // Для этого можно использовать coverData для создания изображения
-            }
+            // Установка максимального значения для слайдера позиции
+            PositionSlider.Maximum = duration.TotalSeconds;
+            TotalDurationLabel.Content = duration.ToString(@"m\:ss");
 
             // Вывод информации (можно и нужно адаптировать под ваш интерфейс)
             System.Windows.MessageBox.Show($"Title: {title}\nArtist: {artist}\nDuration: {duration}");
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if (_player.Source != null && _player.NaturalDuration.HasTimeSpan)
+            {
+                PositionSlider.Value = _player.Position.TotalSeconds;
+                CurrentPositionLabel.Content = _player.Position.ToString(@"m\:ss");
+            }
+        }
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (PositionSlider.IsMouseCaptureWithin)
+            {
+                _player.Position = TimeSpan.FromSeconds(PositionSlider.Value);
+            }
         }
 
         private void CloseCommand_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -150,8 +184,22 @@ namespace MusicPlayerWpf
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show($"Commits >= 3: 1 pont\nCustom disign: 1 point\nPlayer can play & work correctly: 2 point\nHot keys: 1 point\nLoad mp3 info & image: 1 point\n*Can choose track from folder: 1 point\n*Save new playlist: 1 point",
+            System.Windows.MessageBox.Show($"Commits >= 3: 1 point\nCustom design: 1 point\nPlayer can play & work correctly: 2 points\nHot keys: 1 point\nLoad mp3 info & image: 1 point\n*Can choose track from folder: 1 point\n*Save new playlist: 1 point",
                 "Points total: 8 points", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void ToggleWindowStateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.WindowState == WindowState.Normal)
+            {
+                this.WindowState = WindowState.Maximized;
+                ((Button)sender).Content = new MaterialDesignThemes.Wpf.PackIcon { Kind = MaterialDesignThemes.Wpf.PackIconKind.WindowRestore };
+            }
+            else
+            {
+                this.WindowState = WindowState.Normal;
+                ((Button)sender).Content = new MaterialDesignThemes.Wpf.PackIcon { Kind = MaterialDesignThemes.Wpf.PackIconKind.WindowMaximize };
+            }
         }
     }
 }
