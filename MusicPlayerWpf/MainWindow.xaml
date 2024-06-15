@@ -16,16 +16,17 @@
     WindowStyle="None"
     mc:Ignorable="d">
 	<Window.CommandBindings>
-		<CommandBinding
-            CanExecute="CloseCommand_CanExecute"
-            Command="{x:Static local:MainWindow.CloseCommand}"
-            Executed="CloseCommand_Executed" />
+		<CommandBinding Command="{x:Static local:MainWindow.PauseCommand}" Executed="PauseCommand_Executed"/>
+		<CommandBinding Command="{x:Static local:MainWindow.RestartCommand}" Executed="RestartCommand_Executed"/>
+		<CommandBinding Command="{x:Static local:MainWindow.OpenFileCommand}" Executed="OpenFileCommand_Executed"/>
+		<CommandBinding Command="{x:Static local:MainWindow.ExitCommand}" Executed="ExitCommand_Executed"/>
 	</Window.CommandBindings>
+
 	<Window.InputBindings>
-		<KeyBinding
-            Key="E"
-            Command="{x:Static local:MainWindow.CloseCommand}"
-            Modifiers="Ctrl" />
+		<KeyBinding Key="Z" Modifiers="Control" Command="{x:Static local:MainWindow.PauseCommand}"/>
+		<KeyBinding Key="X" Modifiers="Control" Command="{x:Static local:MainWindow.RestartCommand}"/>
+		<KeyBinding Key="A" Modifiers="Control" Command="{x:Static local:MainWindow.OpenFileCommand}"/>
+		<KeyBinding Key="E" Modifiers="Control" Command="{x:Static local:MainWindow.ExitCommand}"/>
 	</Window.InputBindings>
 	<Grid MouseDown="Window_MouseDown">
 		<Grid.RowDefinitions>

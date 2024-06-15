@@ -32,6 +32,12 @@ namespace MusicPlayerWpf
 
         public static RoutedCommand CloseCommand = new RoutedCommand();
 
+        public static RoutedCommand PauseCommand = new RoutedCommand();
+        public static RoutedCommand RestartCommand = new RoutedCommand();
+        public static RoutedCommand OpenFileCommand = new RoutedCommand();
+        public static RoutedCommand ExitCommand = new RoutedCommand();
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -225,6 +231,42 @@ namespace MusicPlayerWpf
             }
 
             System.Windows.MessageBox.Show("Playlist saved successfully!", "Save Playlist", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        //горячие клавиши
+        private void PauseCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (_isPlaying)
+            {
+                _player.Pause();
+                _isPlaying = false;
+                PlayPauseBtn.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
+            }
+            else
+            {
+                _player.Play();
+                _isPlaying = true;
+                _timer.Start();
+                PlayPauseBtn.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
+            }
+        }
+
+        private void RestartCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            _player.Stop();
+            _player.Play();
+            _isPlaying = true;
+            _timer.Start();
+            PlayPauseBtn.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
+        }
+
+        private void OpenFileCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            OpenFileMI_Click(sender, e);
+        }
+        private void ExitCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }
