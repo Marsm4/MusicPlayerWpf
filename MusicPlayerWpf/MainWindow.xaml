@@ -113,10 +113,11 @@
 				<ColumnDefinition Width="2*" />
 			</Grid.ColumnDefinitions>
 
-			<Image
+			<!--<Image
                 Grid.Column="0"
                 Margin="12"
-                Source="/logo.jpg" />
+                Source="/logo.jpg" />-->
+			<Image x:Name="AlbumArtImage" Width="150" Height="150" Margin="10" Stretch="Uniform"/>
 
 			<Grid Grid.Column="1" Margin="12">
 				<DataGrid
@@ -192,6 +193,7 @@
 						<materialDesign:PackIcon Kind="Stop" />
 					</Button>
 				</WrapPanel>
+
 			</Grid>
 		</Grid>
 	</Grid>

@@ -157,13 +157,36 @@ namespace MusicPlayerWpf
             // Получение названия трека
             string title = file.Tag.Title ?? "Unknown Title";
 
+            // Получение обложки альбома (если доступна)
+            BitmapImage albumArt = null;
+            if (file.Tag.Pictures.Length > 0)
+            {
+                var picture = file.Tag.Pictures[0];
+                albumArt = new BitmapImage();
+                albumArt.BeginInit();
+                albumArt.StreamSource = new MemoryStream(picture.Data.Data);
+                albumArt.EndInit();
+            }
+
             // Установка максимального значения для слайдера позиции
             PositionSlider.Maximum = duration.TotalSeconds;
             TotalDurationLabel.Content = duration.ToString(@"m\:ss");
 
-            // Вывод информации (можно и нужно адаптировать под ваш интерфейс)
+            // Отображение информации о треке
             System.Windows.MessageBox.Show($"Title: {title}\nArtist: {artist}\nDuration: {duration}");
+
+            // Отображение обложки альбома (если доступна)
+            if (albumArt != null)
+            {
+                AlbumArtImage.Source = albumArt;
+            }
+            else
+            {
+                // Если обложка отсутствует, можно отобразить стандартное изображение или скрыть элемент
+                AlbumArtImage.Source = null; // Например, скрываем изображение обложки
+            }
         }
+
 
         private void Timer_Tick(object sender, EventArgs e)
         {
