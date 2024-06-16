@@ -19,14 +19,18 @@
         <CommandBinding Command="{x:Static local:MainWindow.RestartCommand}" Executed="RestartCommand_Executed"/>
         <CommandBinding Command="{x:Static local:MainWindow.OpenFileCommand}" Executed="OpenFileCommand_Executed"/>
         <CommandBinding Command="{x:Static local:MainWindow.ExitCommand}" Executed="ExitCommand_Executed"/>
-    </Window.CommandBindings>
+		<CommandBinding Command="{x:Static local:MainWindow.SkipNextCommand}" Executed="SkipNextCommand_Executed"/>
+		<CommandBinding Command="{x:Static local:MainWindow.SkipPreviousCommand}" Executed="SkipPreviousCommand_Executed"/>
+	</Window.CommandBindings>
 
     <Window.InputBindings>
         <KeyBinding Key="Z" Modifiers="Control" Command="{x:Static local:MainWindow.PauseCommand}"/>
         <KeyBinding Key="X" Modifiers="Control" Command="{x:Static local:MainWindow.RestartCommand}"/>
         <KeyBinding Key="A" Modifiers="Control" Command="{x:Static local:MainWindow.OpenFileCommand}"/>
         <KeyBinding Key="E" Modifiers="Control" Command="{x:Static local:MainWindow.ExitCommand}"/>
-    </Window.InputBindings>
+		<KeyBinding Key="W" Modifiers="Control" Command="{x:Static local:MainWindow.SkipNextCommand}"/>
+		<KeyBinding Key="Q" Modifiers="Control" Command="{x:Static local:MainWindow.SkipPreviousCommand}"/>
+	</Window.InputBindings>
     <Grid MouseDown="Window_MouseDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />

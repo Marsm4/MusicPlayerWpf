@@ -33,16 +33,16 @@ namespace MusicPlayerWpf
         private List<string> selectedTracks;
 
         public static RoutedCommand CloseCommand = new RoutedCommand();
-
         public static RoutedCommand PauseCommand = new RoutedCommand();
         public static RoutedCommand RestartCommand = new RoutedCommand();
         public static RoutedCommand OpenFileCommand = new RoutedCommand();
         public static RoutedCommand ExitCommand = new RoutedCommand();
+        public static readonly RoutedCommand SkipNextCommand = new RoutedCommand();
+        public static readonly RoutedCommand SkipPreviousCommand = new RoutedCommand();
 
         //список треков
         public List<Track> Tracks { get; set; } = new List<Track>();
         private int currentTrackIndex = -1; // Индекс текущего выбранного трека
-
 
         public MainWindow()
         {
@@ -164,32 +164,36 @@ namespace MusicPlayerWpf
                 PlayPauseBtn.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
             }
         }
+
         private void PlayTrack()
         {
             if (currentTrackIndex >= 0 && currentTrackIndex < Tracks.Count)
             {
-                _player.Open(new Uri(Tracks[currentTrackIndex].FilePath));
-                _player.Play();
-                _isPlaying = true;
-                _timer.Start();
-                PlayPauseBtn.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
-
                 var track = Tracks[currentTrackIndex];
-                if (track.AlbumArt != null)
+                if (!string.IsNullOrEmpty(track.FilePath))
                 {
-                    using (var ms = new MemoryStream(track.AlbumArt))
+                    _player.Open(new Uri(track.FilePath));
+                    _player.Play();
+                    _isPlaying = true;
+                    _timer.Start();
+                    PlayPauseBtn.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
+
+                    if (track.AlbumArt != null)
                     {
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.StreamSource = ms;
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.EndInit();
-                        AlbumArtImage.Source = bitmap;
+                        using (var ms = new MemoryStream(track.AlbumArt))
+                        {
+                            var bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.StreamSource = ms;
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.EndInit();
+                            AlbumArtImage.Source = bitmap;
+                        }
                     }
-                }
-                else
-                {
-                    AlbumArtImage.Source = null;
+                    else
+                    {
+                        AlbumArtImage.Source = null;
+                    }
                 }
             }
         }
@@ -273,7 +277,6 @@ namespace MusicPlayerWpf
             }
         }
 
-
         private void Timer_Tick(object sender, EventArgs e)
         {
             if (_player.Source != null && _player.NaturalDuration.HasTimeSpan)
@@ -344,7 +347,6 @@ namespace MusicPlayerWpf
             System.Windows.MessageBox.Show("Playlist saved successfully!", "Save Playlist", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-
         //горячие клавиши
         private void PauseCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -376,6 +378,7 @@ namespace MusicPlayerWpf
         {
             OpenFileMI_Click(sender, e);
         }
+
         private void ExitCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             this.Close();
@@ -383,8 +386,7 @@ namespace MusicPlayerWpf
 
         private void FilesDG_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedTrack = FilesDG.SelectedItem as Track;
-            if (selectedTrack != null)
+            if (FilesDG.SelectedItem is Track selectedTrack)
             {
                 currentTrackIndex = Tracks.IndexOf(selectedTrack);
                 PlayTrack();
@@ -417,6 +419,16 @@ namespace MusicPlayerWpf
             }
         }
 
+
+        private void SkipNextCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            SkipNextBtn_Click(sender, e);
+        }
+
+        private void SkipPreviousCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            SkipPreviousBtn_Click(sender, e);
+        }
 
         public class Track
         {
