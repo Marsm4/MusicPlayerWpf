@@ -174,7 +174,8 @@
                     <Button Click="SkipNextBtn_Click" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" ToolTip="Skip Next">
                         <materialDesign:PackIcon Kind="SkipNext" />
                     </Button>
-                </WrapPanel>
+					<Button x:Name="ShuffleBtn" Content="Shuffle" Click="ShuffleBtn_Click" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,10,0" IsCancel="True"/>
+				</WrapPanel>
 
             </Grid>
         </Grid>

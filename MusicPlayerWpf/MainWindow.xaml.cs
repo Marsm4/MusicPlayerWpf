@@ -39,6 +39,8 @@ namespace MusicPlayerWpf
         public static RoutedCommand ExitCommand = new RoutedCommand();
         public static readonly RoutedCommand SkipNextCommand = new RoutedCommand();
         public static readonly RoutedCommand SkipPreviousCommand = new RoutedCommand();
+        //перемешать музыку
+        private Random _random = new Random();
 
         //список треков
         public List<Track> Tracks { get; set; } = new List<Track>();
@@ -203,8 +205,44 @@ namespace MusicPlayerWpf
                     {
                         AlbumArtImage.Source = null;
                     }
+
+                    // Subscribe to MediaEnded event to automatically play next track
+                    _player.MediaEnded += Player_MediaEnded;
                 }
             }
+        }
+        private void Player_MediaEnded(object sender, EventArgs e)
+        {
+            // Stop the timer
+            _timer.Stop();
+
+            // Play next track automatically
+            Dispatcher.Invoke(() =>
+            {
+                SkipNextBtn_Click(null, null);
+            });
+        }
+        private void ShuffleTracks()
+        {
+            int n = Tracks.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = _random.Next(n + 1);
+                Track value = Tracks[k];
+                Tracks[k] = Tracks[n];
+                Tracks[n] = value;
+            }
+
+            FilesDG.ItemsSource = null;
+            FilesDG.ItemsSource = Tracks;
+
+            // Reset current track index after shuffle
+            currentTrackIndex = -1;
+        }
+        private void ShuffleBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ShuffleTracks();
         }
 
         private void StopBtn_Click(object sender, RoutedEventArgs e)
