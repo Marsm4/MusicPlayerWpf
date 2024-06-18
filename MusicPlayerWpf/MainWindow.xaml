@@ -153,8 +153,11 @@
                         </Grid>
                         <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center">
                             <materialDesign:PackIcon HorizontalAlignment="Right" VerticalAlignment="Center" Kind="VolumeMedium" />
-                            <Slider Width="80" Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Center" Maximum="100" Minimum="0" Value="100" />
-                        </WrapPanel>
+							<Slider x:Name="VolumeSlider" Width="80" Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Center"
+        Maximum="1" Minimum="0" Value="1" TickFrequency="0.01" TickPlacement="BottomRight"
+        ValueChanged="VolumeSlider_ValueChanged" />
+
+						</WrapPanel>
                     </Grid>
                 </materialDesign:Card>
                 <WrapPanel HorizontalAlignment="Center" Margin="0,12,0,0">

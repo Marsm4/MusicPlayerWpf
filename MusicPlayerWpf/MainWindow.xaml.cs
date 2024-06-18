@@ -57,6 +57,15 @@ namespace MusicPlayerWpf
             selectedTracks = new List<string>();
         }
 
+        //прибавить звук
+        private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_player != null)
+            {
+                _player.Volume = VolumeSlider.Value;
+            }
+        }
+
         private void OpenFileMI_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
