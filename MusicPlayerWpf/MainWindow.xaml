@@ -19,26 +19,26 @@
         <CommandBinding Command="{x:Static local:MainWindow.RestartCommand}" Executed="RestartCommand_Executed"/>
         <CommandBinding Command="{x:Static local:MainWindow.OpenFileCommand}" Executed="OpenFileCommand_Executed"/>
         <CommandBinding Command="{x:Static local:MainWindow.ExitCommand}" Executed="ExitCommand_Executed"/>
-		<CommandBinding Command="{x:Static local:MainWindow.SkipNextCommand}" Executed="SkipNextCommand_Executed"/>
-		<CommandBinding Command="{x:Static local:MainWindow.SkipPreviousCommand}" Executed="SkipPreviousCommand_Executed"/>
-	</Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:MainWindow.SkipNextCommand}" Executed="SkipNextCommand_Executed"/>
+        <CommandBinding Command="{x:Static local:MainWindow.SkipPreviousCommand}" Executed="SkipPreviousCommand_Executed"/>
+    </Window.CommandBindings>
 
     <Window.InputBindings>
         <KeyBinding Key="Z" Modifiers="Control" Command="{x:Static local:MainWindow.PauseCommand}"/>
         <KeyBinding Key="X" Modifiers="Control" Command="{x:Static local:MainWindow.RestartCommand}"/>
         <KeyBinding Key="A" Modifiers="Control" Command="{x:Static local:MainWindow.OpenFileCommand}"/>
         <KeyBinding Key="E" Modifiers="Control" Command="{x:Static local:MainWindow.ExitCommand}"/>
-		<KeyBinding Key="W" Modifiers="Control" Command="{x:Static local:MainWindow.SkipNextCommand}"/>
-		<KeyBinding Key="Q" Modifiers="Control" Command="{x:Static local:MainWindow.SkipPreviousCommand}"/>
-	</Window.InputBindings>
+        <KeyBinding Key="W" Modifiers="Control" Command="{x:Static local:MainWindow.SkipNextCommand}"/>
+        <KeyBinding Key="Q" Modifiers="Control" Command="{x:Static local:MainWindow.SkipPreviousCommand}"/>
+    </Window.InputBindings>
     <Grid MouseDown="Window_MouseDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="#E91E63">
-            <Menu>
+        <Grid Grid.Row="0" Background="#E91E">
+            <Menu Foreground="#E500FF61">
                 <MenuItem Header="_File">
                     <MenuItem
                         Click="OpenFileMI_Click"
@@ -117,11 +117,22 @@
             </Grid.ColumnDefinitions>
 
             <!-- Изображение обложки альбома -->
-            <Image x:Name="AlbumArtImage" Width="150" Height="150" Margin="10" Stretch="Uniform"/>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10">
+                <Image x:Name="AlbumArtImage" Width="150" Height="150" Stretch="Uniform"/>
+                <TextBlock x:Name="TrackTitleTextBlock" Text="Track Title" Margin="5,10,5,0" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14"/>
+            </StackPanel>
+
+
 
             <!-- DataGrid для отображения файлов -->
             <Grid Grid.Column="1" Margin="12">
                 <DataGrid x:Name="FilesDG" AutoGenerateColumns="False" ItemsSource="{Binding Tracks}" SelectionChanged="FilesDG_SelectionChanged">
+                    <DataGrid.Background>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="Black"/>
+                            <GradientStop Color="#FF060606" Offset="1"/>
+                        </LinearGradientBrush>
+                    </DataGrid.Background>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*" />
                         <DataGridTextColumn Header="Artist" Binding="{Binding Artist}" Width="*" />
@@ -137,13 +148,17 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <Label x:Name="FileNameLb" Content="No song select" />
+                <Label x:Name="FileNameLb" Content="No song select" Background="White" />
             </Grid>
             <Grid Grid.Row="1">
                 <Grid>
-                    <Slider x:Name="PositionSlider" Maximum="100" Minimum="0" ValueChanged="Slider_ValueChanged" />
-                    <Label x:Name="CurrentPositionLabel" HorizontalAlignment="Left" Content="0:00" />
-                    <Label x:Name="TotalDurationLabel" HorizontalAlignment="Right" Content="0:00" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="17*"/>
+                        <ColumnDefinition Width="83*"/>
+                    </Grid.ColumnDefinitions>
+                    <Slider x:Name="PositionSlider" Maximum="100" Minimum="0" ValueChanged="Slider_ValueChanged" Grid.ColumnSpan="2" Foreground="#FF1FFF00" />
+                    <Label x:Name="CurrentPositionLabel" HorizontalAlignment="Left" Content="0:00" Foreground="Black" />
+                    <Label x:Name="TotalDurationLabel" HorizontalAlignment="Left" Content="0:00" Grid.Column="1" Margin="551,0,0,0" Foreground="Black"/>
                 </Grid>
                 <materialDesign:Card Margin="0,20,0,0">
                     <Grid>
@@ -152,30 +167,30 @@
                             <Button HorizontalAlignment="Right" Content="{materialDesign:PackIcon SkipNext}" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="SkipNext" />
                         </Grid>
                         <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center">
-                            <materialDesign:PackIcon HorizontalAlignment="Right" VerticalAlignment="Center" Kind="VolumeMedium" />
-							<Slider x:Name="VolumeSlider" Width="80" Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            <materialDesign:PackIcon HorizontalAlignment="Right" VerticalAlignment="Center" Kind="VolumeMedium" Foreground="White" />
+                            <Slider x:Name="VolumeSlider" Width="80" Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Center"
         Maximum="1" Minimum="0" Value="1" TickFrequency="0.01" TickPlacement="BottomRight"
-        ValueChanged="VolumeSlider_ValueChanged" />
+        ValueChanged="VolumeSlider_ValueChanged" Foreground="#FF00FF27" />
 
-						</WrapPanel>
+                        </WrapPanel>
                     </Grid>
                 </materialDesign:Card>
                 <WrapPanel HorizontalAlignment="Center" Margin="0,12,0,0">
-                    <Button Click="PlayPauseBtn_Click" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" ToolTip="Play/Pause">
+                    <Button Click="PlayPauseBtn_Click" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" ToolTip="Play/Pause" Background="#FF42FF00" BorderBrush="Black">
                         <materialDesign:PackIcon x:Name="PlayPauseBtn" Kind="Play" />
                     </Button>
-                    <Button Click="StopBtn_Click" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" ToolTip="Stop">
+                    <Button Click="StopBtn_Click" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" ToolTip="Stop" Background="#FF42FF00" BorderBrush="Black">
                         <materialDesign:PackIcon Kind="Stop" />
                     </Button>
-                    <Button Click="SkipPreviousBtn_Click" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" ToolTip="Skip Previous">
+                    <Button Click="SkipPreviousBtn_Click" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" ToolTip="Skip Previous"  Background="#FF42FF00" BorderBrush="Black">
                         <materialDesign:PackIcon Kind="SkipPrevious" />
                     </Button>
 
-                    <Button Click="SkipNextBtn_Click" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" ToolTip="Skip Next">
+                    <Button Click="SkipNextBtn_Click" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" ToolTip="Skip Next"  Background="#FF42FF00" BorderBrush="Black">
                         <materialDesign:PackIcon Kind="SkipNext" />
                     </Button>
-					<Button x:Name="ShuffleBtn" Content="Shuffle" Click="ShuffleBtn_Click" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,10,0" IsCancel="True"/>
-				</WrapPanel>
+                    <Button x:Name="ShuffleBtn" Content="Shuffle" Click="ShuffleBtn_Click" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,10,0" IsCancel="True"  Background="#FF42FF00" BorderBrush="Black"/>
+                </WrapPanel>
 
             </Grid>
         </Grid>

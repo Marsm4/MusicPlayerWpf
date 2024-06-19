@@ -199,6 +199,7 @@ namespace MusicPlayerWpf
                             bitmap.CacheOption = BitmapCacheOption.OnLoad;
                             bitmap.EndInit();
                             AlbumArtImage.Source = bitmap;
+                            TrackTitleTextBlock.Text = track.Title;//название трэка
                         }
                     }
                     else
@@ -206,7 +207,6 @@ namespace MusicPlayerWpf
                         AlbumArtImage.Source = null;
                     }
 
-                    // Subscribe to MediaEnded event to automatically play next track
                     _player.MediaEnded += Player_MediaEnded;
                 }
             }
@@ -326,12 +326,20 @@ namespace MusicPlayerWpf
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            if (_player.Source != null && _player.NaturalDuration.HasTimeSpan)
+            if (_player.Source != null)
             {
+                // Обновляем позицию слайдера
                 PositionSlider.Value = _player.Position.TotalSeconds;
+
+                // Обновляем текущую позицию
                 CurrentPositionLabel.Content = _player.Position.ToString(@"m\:ss");
+
+                // Вычисляем и отображаем оставшееся время
+                TimeSpan remainingTime = _player.NaturalDuration.TimeSpan - _player.Position;
+                TotalDurationLabel.Content = remainingTime.ToString(@"m\:ss");
             }
         }
+
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -476,6 +484,7 @@ namespace MusicPlayerWpf
         {
             SkipPreviousBtn_Click(sender, e);
         }
+
 
         public class Track
         {
